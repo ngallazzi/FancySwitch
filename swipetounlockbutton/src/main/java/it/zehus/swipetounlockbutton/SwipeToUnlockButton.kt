@@ -1,12 +1,15 @@
 package it.zehus.swipetounlockbutton
 
 import android.content.Context
+import android.graphics.drawable.AnimationDrawable
+import android.support.animation.DynamicAnimation
+import android.support.animation.SpringAnimation
 import android.support.constraint.ConstraintLayout
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import kotlinx.android.synthetic.main.swipe_to_unlock_button.view.*
-import android.util.Log
 
 
 /**
@@ -18,10 +21,7 @@ class SwipeToUnlockButton @kotlin.jvm.JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr) {
 
-    private var initialY = 0
-    private var previousX = 0f
-    private var previousY = 0f
-    private var yLimit = 10.0f
+    private var yLimit = 0
 
 
     init {
@@ -30,37 +30,80 @@ class SwipeToUnlockButton @kotlin.jvm.JvmOverloads constructor(
 
     private fun initLayout() {
         inflate(context, R.layout.swipe_to_unlock_button, this)
-        previousX = ibUnlock.x
-        previousY = ibUnlock.y
+    }
 
-        ibUnlock.setOnTouchListener(object : OnTouchListener {
+    override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
+        super.onLayout(changed, left, top, right, bottom)
+
+        var dY = 0f
+
+        var yUpperLimit = clContainer.y + 10
+        var btUnlockInitialY = ibAction.y
+        var unlockCompleted = true
+
+        lateinit var unlockAnimation: AnimationDrawable
+        lateinit var lockAnimation: AnimationDrawable
+
+        ibAction.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-
-                val x: Float = event.x
-                val y: Float = event.y
-
+                Log.v(TAG, "Position x: $v.x, position y:$v.y")
+                Log.v(TAG, "Position event x: $event.x, position event y:$event.y")
+                Log.v(TAG, "Unlock icon position y:${ivUnlocked.y}")
+                Log.v(TAG, "Lock icon position y:${ivLocked.y}")
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        return true
+                        dY = v.y - event.rawY
+                        if (unlockCompleted) {
+                            ibAction.apply {
+                                setImageResource(R.drawable.anim_unlock)
+                                unlockAnimation = ibAction.drawable as AnimationDrawable
+                                unlockAnimation.start()
+                            }
+                        } else {
+                            ibAction.apply {
+                                setImageResource(R.drawable.anim_lock)
+                                lockAnimation = ibAction.drawable as AnimationDrawable
+                                lockAnimation.start()
+                            }
+                        }
                     }
                     // movement
                     MotionEvent.ACTION_MOVE -> {
-                        var dy: Float = y - previousY
-                        if (dy >= yLimit) {
-                            ibUnlock.y = dy
-
-                            previousY = dy
+                        val newPositionY = event.rawY + dY
+                        if (newPositionY in yUpperLimit..btUnlockInitialY) {
+                            v.animate()
+                                .x(v.x)
+                                .y(newPositionY)
+                                .setDuration(0)
+                                .start()
                         }
-                        return true
                     }
                     // release
                     MotionEvent.ACTION_UP -> {
-                        return true
-                    }
-                    else -> {
-                        return true
+                        val draggedDistance = ivLocked.y - v.y
+                        unlockCompleted = draggedDistance >= (ivLocked.y - ivUnlocked.y) / 2
+                        if (unlockCompleted) {
+                            ibAction.let {
+                                SpringAnimation(
+                                    it,
+                                    DynamicAnimation.TRANSLATION_Y,
+                                    -(ivLocked.y - ivUnlocked.y)
+                                ).apply {
+                                    start()
+                                }
+                                ibAction.setImageResource(R.drawable.ic_lock_open)
+                            }
+                        } else {
+                            ibAction.let {
+                                SpringAnimation(it, DynamicAnimation.TRANSLATION_Y, 0f).apply {
+                                    start()
+                                }
+                                ibAction.setImageResource(R.drawable.ic_lock_closed)
+                            }
+                        }
                     }
                 }
+                return true
             }
         })
     }
