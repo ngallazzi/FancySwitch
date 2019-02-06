@@ -1,1 +1,1 @@
-include ':app', ':swipetounlockbutton'
+include ':app', ':fancyswitch'
