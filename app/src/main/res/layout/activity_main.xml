@@ -5,9 +5,9 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="it.zehus.fancyswitchsample.MainActivity">
+        tools:context="it.ngallazzi.fancyswitchsample.MainActivity">
 
-    <it.zehus.fancyswitch.FancySwitch
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch_7"
             android:layout_height="110dp"
             android:layout_width="wrap_content"
@@ -19,8 +19,8 @@
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toEndOf="@+id/fancySwitch_6"
             android:layout_marginStart="16dp" app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintEnd_toEndOf="parent">
-    </it.zehus.fancyswitch.FancySwitch>
-    <it.zehus.fancyswitch.FancySwitch
+    </it.ngallazzi.fancyswitch.FancySwitch>
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch_6"
             android:layout_height="140dp"
             android:layout_width="wrap_content"
@@ -32,8 +32,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toEndOf="@+id/fancySwitch_1" android:layout_marginStart="8dp"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/fancySwitch_7">
-    </it.zehus.fancyswitch.FancySwitch>
-    <it.zehus.fancyswitch.FancySwitch
+    </it.ngallazzi.fancyswitch.FancySwitch>
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
@@ -45,10 +45,10 @@
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginStart="48dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="32dp"
             app:layout_constraintTop_toBottomOf="@+id/fancySwitch_4">
-    </it.zehus.fancyswitch.FancySwitch>
-    <it.zehus.fancyswitch.FancySwitch
+    </it.ngallazzi.fancyswitch.FancySwitch>
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch_1"
-            android:layout_height="250dp"
+            android:layout_height="160dp"
             android:layout_width="wrap_content"
             app:orientation="PORTRAIT"
             app:actionOffDrawable="@drawable/ic_lock_open_1"
@@ -57,8 +57,8 @@
             android:layout_marginStart="16dp" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginTop="16dp" app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/fancySwitch_6">
-    </it.zehus.fancyswitch.FancySwitch>
-    <it.zehus.fancyswitch.FancySwitch
+    </it.ngallazzi.fancyswitch.FancySwitch>
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch_3"
             android:layout_height="79dp"
             android:layout_width="0dp"
@@ -71,8 +71,8 @@
             app:layout_constraintTop_toTopOf="@+id/fancySwitch_4"
             app:layout_constraintBottom_toBottomOf="@+id/fancySwitch_4" android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintHorizontal_bias="0.5">
-    </it.zehus.fancyswitch.FancySwitch>
-    <it.zehus.fancyswitch.FancySwitch
+    </it.ngallazzi.fancyswitch.FancySwitch>
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch_4"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
@@ -84,8 +84,8 @@
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toStartOf="@+id/fancySwitch_3"
             android:layout_marginStart="16dp" android:layout_marginTop="32dp"
             app:layout_constraintTop_toBottomOf="@+id/fancySwitch_1">
-    </it.zehus.fancyswitch.FancySwitch>
-    <it.zehus.fancyswitch.FancySwitch
+    </it.ngallazzi.fancyswitch.FancySwitch>
+    <it.ngallazzi.fancyswitch.FancySwitch
             android:id="@+id/fancySwitch_5"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
@@ -97,5 +97,5 @@
             app:layout_constraintTop_toBottomOf="@+id/fancySwitch" android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="32dp"
             app:layout_constraintEnd_toEndOf="parent">
-    </it.zehus.fancyswitch.FancySwitch>
+    </it.ngallazzi.fancyswitch.FancySwitch>
 </android.support.constraint.ConstraintLayout>
