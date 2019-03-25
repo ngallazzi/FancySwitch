@@ -20,7 +20,8 @@ public class MainActivity extends AppCompatActivity {
         fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
             @Override
             public void onChanged(@NotNull FancySwitch.State newState) {
-                Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,
+                        "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
             }
         });
     }

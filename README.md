@@ -42,15 +42,16 @@ allprojects {
 ```groovy
 // Kotlin
 @Override
-protected void onCreate(@Nullable Bundle savedInstanceState) {
-	super.onCreate(savedInstanceState);
-FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
-fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
-	@Override
-	public void onChanged(@NotNull FancySwitch.State newState) {
-		Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
-		}	
-	});
+override fun onCreate(savedInstanceState: Bundle?) {
+	super.onCreate(savedInstanceState)
+	setContentView(R.layout.your_activity_layout)
+
+	fancySwitch_1.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
+		override fun onChanged(newState: FancySwitch.State) {
+			Toast.makeText(this@MainActivity, 
+				"New switch state: ${newState.name}", Toast.LENGTH_SHORT).show()
+		}
+	})
 }
 ```
 ```groovy
@@ -59,11 +60,14 @@ fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedList
 @Override
 protected void onCreate(@Nullable Bundle savedInstanceState) {
 	super.onCreate(savedInstanceState);
+	setContentView(R.layout.your_activity_layout)
+	
 	FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
 	fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
 		@Override
 		public void onChanged(@NotNull FancySwitch.State newState) {
-			Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this,
+					"New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
 		}
 	});
 }

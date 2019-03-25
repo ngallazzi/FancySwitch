@@ -13,7 +13,8 @@ class MainActivity : AppCompatActivity() {
 
         fancySwitch_1.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
-                Toast.makeText(this@MainActivity, "New switch state: ${newState.name}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MainActivity,
+                    "New switch state: ${newState.name}", Toast.LENGTH_SHORT).show()
             }
         })
     }
