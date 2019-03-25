@@ -29,7 +29,7 @@ allprojects {
 # In your .xml
 ```groovy
   <it.ngallazzi.fancyswitch.FancySwitch
-            android:id="@+id/fancySwitch_7"
+            android:id="@+id/fancySwitch"
             android:layout_height="110dp"
             android:layout_width="wrap_content"
             app:orientation="PORTRAIT"
@@ -37,6 +37,39 @@ allprojects {
             app:actionOnDrawable="@drawable/ic_hdr_on"
             app:baseColor="@android:color/holo_blue_dark" />
 ```
+
+# In your activity/fragment
+```groovy
+	// Kotlin
+	public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
+        fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
+            @Override
+            public void onChanged(@NotNull FancySwitch.State newState) {
+                Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
+            }
+			});
+		}
+	}
+	// Java 
+	public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
+        fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
+            @Override
+            public void onChanged(@NotNull FancySwitch.State newState) {
+                Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+}
+```
+
 
 # Options
  - custom **orientation**: "app:orientation" - sets the orientation of the switch (PORTRAIT/LANDSCAPE)
