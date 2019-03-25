@@ -40,33 +40,32 @@ allprojects {
 
 # In your activity/fragment
 ```groovy
-	// Kotlin
-	public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
-        fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
-            @Override
-            public void onChanged(@NotNull FancySwitch.State newState) {
-                Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
-            }
-			});
+// Kotlin
+@Override
+protected void onCreate(@Nullable Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
+fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
+	@Override
+	public void onChanged(@NotNull FancySwitch.State newState) {
+		Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
+		}	
+	});
+}
+```
+```groovy
+// Java 
+
+@Override
+protected void onCreate(@Nullable Bundle savedInstanceState) {
+	super.onCreate(savedInstanceState);
+	FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
+	fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
+		@Override
+		public void onChanged(@NotNull FancySwitch.State newState) {
+			Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
 		}
-	}
-	// Java 
-	public class MainActivity extends AppCompatActivity {
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        FancySwitch fancySwitch = findViewById(R.id.fancySwitch);
-        fancySwitch.setSwitchStateChangedListener(new FancySwitch.SwitchStateChangedListener() {
-            @Override
-            public void onChanged(@NotNull FancySwitch.State newState) {
-                Toast.makeText(MainActivity.this, "New switch state: " + newState.name(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
+	});
 }
 ```
 
