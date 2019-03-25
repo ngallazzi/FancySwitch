@@ -6,7 +6,7 @@
 A nice looking switch on/off button
 
 <div>
-  <img src="https://raw.githubusercontent.com/ngallazzi/FancySwitch/master/demo.gif" width="300" hspace="20" />
+  <img src="https://raw.githubusercontent.com/ngallazzi/FancySwitch/master/demo.gif" width="400" hspace="20" />
   <br/>
 </div>
 
