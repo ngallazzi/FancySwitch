@@ -14,7 +14,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import it.zehus.fancyswitch.FancySwitch.Orientation.*
+import it.zehus.fancyswitch.FancySwitch.Orientation.LANDSCAPE
+import it.zehus.fancyswitch.FancySwitch.Orientation.PORTRAIT
 import kotlinx.android.synthetic.main.fancy_switch_portrait.view.*
 
 
@@ -32,6 +33,9 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     private var actionOnButtonDrawable: Drawable
     private var actionOffDrawable: Drawable
     private var actionOffButtonDrawable: Drawable
+    private var lastState: State = State.OFF
+    private var currentState: State = State.OFF
+    private lateinit var changeListener: FancySwitch.SwitchStateChangedListener
 
     private var actionButtonMargin = 0
     private var mBaseColor: Int
@@ -98,10 +102,6 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
 
         ibAction.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-                Log.v(TAG, "Position x: $v.x, position y:$v.y")
-                Log.v(TAG, "Position event x: $event.x, position event y:$event.y")
-                Log.v(TAG, "Unlock icon position y:${ivActionOn.y}")
-                Log.v(TAG, "Lock icon position y:${ivActionOff.y}")
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         when (orientation) {
@@ -176,6 +176,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                 }
                             }
                             clContainer.background.alpha = 255
+                            currentState = State.ON
                         } else {
                             when (orientation) {
                                 PORTRAIT.ordinal -> {
@@ -196,12 +197,26 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                 }
                             }
                             clContainer.background.alpha = 51
+                            currentState = State.OFF
                         }
+                        Log.v(TAG, "Current state:${currentState.name}")
+                        if (currentState != lastState && ::changeListener.isInitialized) {
+                            changeListener.onChanged(currentState)
+                        }
+                        lastState = currentState
                     }
                 }
                 return true
             }
         })
+    }
+
+    fun setSwitchStateChangedListener(listener: SwitchStateChangedListener) {
+        changeListener = listener
+    }
+
+    interface SwitchStateChangedListener {
+        fun onChanged(newState: State)
     }
 
     companion object {
@@ -211,5 +226,9 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
 
     enum class Orientation(type: Int) {
         PORTRAIT(0), LANDSCAPE(1)
+    }
+
+    enum class State(state: Int, name: String) {
+        ON(1, "ON"), OFF(0, "OFF")
     }
 }
