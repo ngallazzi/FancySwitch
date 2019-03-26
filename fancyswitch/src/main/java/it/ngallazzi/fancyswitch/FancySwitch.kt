@@ -159,7 +159,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                         ).apply {
                                             start()
                                         }
-                                        it.setImageDrawable(actionOffButtonDrawable)
+                                        it.setImageDrawable(actionOnButtonDrawable)
                                     }
                                 }
                                 LANDSCAPE.ordinal -> {
@@ -171,7 +171,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                         ).apply {
                                             start()
                                         }
-                                        it.setImageDrawable(actionOffButtonDrawable)
+                                        it.setImageDrawable(actionOnButtonDrawable)
                                     }
                                 }
                             }
@@ -184,7 +184,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                         SpringAnimation(it, DynamicAnimation.TRANSLATION_Y, 0f).apply {
                                             start()
                                         }
-                                        it.setImageDrawable(actionOnButtonDrawable)
+                                        it.setImageDrawable(actionOffButtonDrawable)
                                     }
                                 }
                                 LANDSCAPE.ordinal -> {
@@ -192,7 +192,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                         SpringAnimation(it, DynamicAnimation.TRANSLATION_X, 0f).apply {
                                             start()
                                         }
-                                        it.setImageDrawable(actionOnButtonDrawable)
+                                        it.setImageDrawable(actionOffButtonDrawable)
                                     }
                                 }
                             }
