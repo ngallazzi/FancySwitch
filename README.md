@@ -3,7 +3,7 @@
 <br>
 # FancySwitch
 
-A nice looking switch on/off button
+A nice looking switch for on/off and two states operations
 
 <div>
   <img src="https://raw.githubusercontent.com/ngallazzi/FancySwitch/master/demo.gif" width="400" hspace="20" />
