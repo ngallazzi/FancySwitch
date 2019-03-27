@@ -1,4 +1,4 @@
-
+[![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-HighlightingView-green.svg?style=flat )]( https://android-arsenal.com/details/1/7294 )
 [![API](https://img.shields.io/badge/API-19%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=19)
 <br>
 # FancySwitch
@@ -46,7 +46,7 @@ override fun onCreate(savedInstanceState: Bundle?) {
 	super.onCreate(savedInstanceState)
 	setContentView(R.layout.your_activity_layout)
 
-	fancySwitch_1.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
+	fancySwitch.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
 		override fun onChanged(newState: FancySwitch.State) {
 			Toast.makeText(this@MainActivity, 
 				"New switch state: ${newState.name}", Toast.LENGTH_SHORT).show()
