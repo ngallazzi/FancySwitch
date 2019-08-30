@@ -209,10 +209,43 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                 return true
             }
         })
+        updateLayoutForState()
+    }
+
+    fun setState(newState: State) {
+        lastState = newState
+        currentState = newState
+        requestLayout()
     }
 
     fun setSwitchStateChangedListener(listener: SwitchStateChangedListener) {
         changeListener = listener
+    }
+
+    private fun updateLayoutForState() {
+        if (currentState == State.ON) {
+            when (orientation) {
+                PORTRAIT.ordinal -> {
+                    ibAction.translationY = -(ivActionOff.y - ivActionOn.y - actionButtonMargin)
+                }
+                LANDSCAPE.ordinal -> {
+                    ibAction.translationX = (ivActionOn.x - ivActionOff.x - actionButtonMargin)
+                }
+            }
+            ibAction.setImageDrawable(actionOnButtonDrawable)
+            clContainer.background.alpha = 255
+        } else {
+            when (orientation) {
+                PORTRAIT.ordinal -> {
+                    ibAction.translationY = 0F
+                }
+                LANDSCAPE.ordinal -> {
+                    ibAction.translationX = 0F
+                }
+            }
+            ibAction.setImageDrawable(actionOffButtonDrawable)
+            clContainer.background.alpha = 51
+        }
     }
 
     interface SwitchStateChangedListener {

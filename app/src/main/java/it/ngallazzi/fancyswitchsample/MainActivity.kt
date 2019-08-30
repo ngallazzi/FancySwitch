@@ -11,6 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        fsLock.setState(FancySwitch.State.ON)
         fsLock.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
                 when (newState){
@@ -20,6 +21,10 @@ class MainActivity : AppCompatActivity() {
                         "New switch state: Unlocked", Toast.LENGTH_SHORT).show()
                 }
 
+                when (newState) {
+                    FancySwitch.State.ON ->  fsSmile.setState(FancySwitch.State.ON)
+                    FancySwitch.State.OFF ->  fsSmile.setState(FancySwitch.State.OFF)
+                }
             }
         })
 
