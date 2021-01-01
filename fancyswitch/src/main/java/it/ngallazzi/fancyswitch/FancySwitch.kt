@@ -71,10 +71,12 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
             LANDSCAPE.ordinal -> inflate(context, R.layout.fancy_switch_land, this)
         }
 
+        actionButtonMargin =
+            ((resources.getDimension(R.dimen.iv_action_completed_margin) /
+                    resources.displayMetrics.density).toInt())
         clContainer.background = backgroundShape
         clContainer.background.alpha = 102
-        actionButtonMargin =
-            ((resources.getDimension(R.dimen.iv_action_completed_margin) / resources.displayMetrics.density).toInt())
+
         ivActionOff.setImageDrawable(actionOffDrawable)
         ivActionOn.setImageDrawable(actionOnDrawable)
 
@@ -88,13 +90,13 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
 
         var translationDelta = 0f
 
-        var translationLimit: Float = when (orientation) {
+        val translationLimit: Float = when (orientation) {
             PORTRAIT.ordinal -> clContainer.y + clContainer.paddingTop
             LANDSCAPE.ordinal -> clContainer.x + clContainer.width + clContainer.paddingStart
             else -> 0f
         }
 
-        var btActionInitialPosition = when (orientation) {
+        val btActionInitialPosition = when (orientation) {
             PORTRAIT.ordinal -> ibAction.y
             LANDSCAPE.ordinal -> ibAction.x
             else -> 0f
@@ -181,7 +183,11 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                             when (orientation) {
                                 PORTRAIT.ordinal -> {
                                     ibAction.let {
-                                        SpringAnimation(it, DynamicAnimation.TRANSLATION_Y, 0f).apply {
+                                        SpringAnimation(
+                                            it,
+                                            DynamicAnimation.TRANSLATION_Y,
+                                            0f
+                                        ).apply {
                                             start()
                                         }
                                         it.setImageDrawable(actionOffButtonDrawable)
@@ -189,7 +195,11 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                                 }
                                 LANDSCAPE.ordinal -> {
                                     ibAction.let {
-                                        SpringAnimation(it, DynamicAnimation.TRANSLATION_X, 0f).apply {
+                                        SpringAnimation(
+                                            it,
+                                            DynamicAnimation.TRANSLATION_X,
+                                            0f
+                                        ).apply {
                                             start()
                                         }
                                         it.setImageDrawable(actionOffButtonDrawable)

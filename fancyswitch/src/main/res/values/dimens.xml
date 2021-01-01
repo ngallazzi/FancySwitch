@@ -5,7 +5,7 @@
     <dimen name="ib_action_base_size">48dp</dimen>
     <dimen name="image_view_base_size">24dp</dimen>
     <dimen name="ib_action_margin">8dp</dimen>
-    <dimen name="iv_action_completed_margin">8dp</dimen>
+    <dimen name="iv_action_completed_margin">16dp</dimen>
     <dimen name="off_alpha">0.2</dimen>
     <dimen name="on_alpha">1</dimen>
 </resources>
