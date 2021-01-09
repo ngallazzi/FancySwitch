@@ -1,6 +1,8 @@
 package it.ngallazzi.fancyswitchsample
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import it.ngallazzi.fancyswitch.FancySwitch
@@ -90,5 +92,16 @@ class MainActivity : AppCompatActivity() {
         })
 
 
+        val mainLooperHandler = Handler(Looper.getMainLooper())
+
+        mainLooperHandler.post(object : Runnable {
+            override fun run() {
+                when (fsCamera.currentState){
+                    FancySwitch.State.ON -> fsCamera.setState(FancySwitch.State.OFF)
+                    else -> fsCamera.setState(FancySwitch.State.ON)
+                }
+                mainLooperHandler.postDelayed(this, 2000)
+            }
+        })
     }
 }

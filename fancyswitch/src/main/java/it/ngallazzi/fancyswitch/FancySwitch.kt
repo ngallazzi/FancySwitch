@@ -34,7 +34,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     private var actionOffDrawable: Drawable
     private var actionOffButtonDrawable: Drawable
     private var lastState: State = State.OFF
-    private var currentState: State = State.OFF
+    var currentState: State = State.OFF
     private lateinit var changeListener: FancySwitch.SwitchStateChangedListener
 
     private var actionButtonMargin = 0
