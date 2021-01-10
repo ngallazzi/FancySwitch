@@ -202,7 +202,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     }
 
     private fun getStateAnimation(orientation: Int, view: View): SpringAnimation {
-        return when (orientation) {
+        val animation =  when (orientation) {
             PORTRAIT.ordinal ->
                 SpringAnimation(
                     view,
@@ -213,6 +213,8 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                 DynamicAnimation.TRANSLATION_X,0f
             )
         }
+        animation.spring.stiffness = SpringForce.STIFFNESS_LOW
+        return animation
     }
 
     private fun updateLayoutForState() {

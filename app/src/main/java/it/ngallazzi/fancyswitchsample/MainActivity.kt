@@ -15,76 +15,100 @@ class MainActivity : AppCompatActivity() {
 
         fsLock.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
-                when (newState){
-                    FancySwitch.State.ON ->  Toast.makeText(this@MainActivity,
-                        "New switch state: Locked", Toast.LENGTH_SHORT).show()
-                    FancySwitch.State.OFF ->  Toast.makeText(this@MainActivity,
-                        "New switch state: Unlocked", Toast.LENGTH_SHORT).show()
+                when (newState) {
+                    FancySwitch.State.ON -> Toast.makeText(
+                        this@MainActivity,
+                        "New switch state: Locked", Toast.LENGTH_SHORT
+                    ).show()
+                    FancySwitch.State.OFF -> Toast.makeText(
+                        this@MainActivity,
+                        "New switch state: Unlocked", Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 when (newState) {
-                    FancySwitch.State.ON ->  fsSmile.setState(FancySwitch.State.ON)
-                    FancySwitch.State.OFF ->  fsSmile.setState(FancySwitch.State.OFF)
+                    FancySwitch.State.ON -> fsSmile.setState(FancySwitch.State.ON)
+                    FancySwitch.State.OFF -> fsSmile.setState(FancySwitch.State.OFF)
                 }
             }
         })
 
-        fsSmile.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener{
+        fsSmile.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
-                when (newState){
-                    FancySwitch.State.ON ->  Toast.makeText(this@MainActivity,
-                        "Smile, life is great!", Toast.LENGTH_SHORT).show()
-                    FancySwitch.State.OFF ->  Toast.makeText(this@MainActivity,
-                        "Sorry you had a bad day", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-        })
-
-        fsHdr.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener{
-            override fun onChanged(newState: FancySwitch.State) {
-                when (newState){
-                    FancySwitch.State.ON ->  Toast.makeText(this@MainActivity,
-                        "Hdr is ON", Toast.LENGTH_SHORT).show()
-                    FancySwitch.State.OFF ->  Toast.makeText(this@MainActivity,
-                        "Hdr is OFF", Toast.LENGTH_SHORT).show()
-                }
-
-            }
-
-        })
-
-        fsEye.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener{
-            override fun onChanged(newState: FancySwitch.State) {
-                when (newState){
-                    FancySwitch.State.ON ->  Toast.makeText(this@MainActivity,
-                        "Visibility is ON", Toast.LENGTH_SHORT).show()
-                    FancySwitch.State.OFF ->  Toast.makeText(this@MainActivity,
-                        "Visibility is OFF", Toast.LENGTH_SHORT).show()
+                when (newState) {
+                    FancySwitch.State.ON -> Toast.makeText(
+                        this@MainActivity,
+                        "Smile, life is great!", Toast.LENGTH_SHORT
+                    ).show()
+                    FancySwitch.State.OFF -> Toast.makeText(
+                        this@MainActivity,
+                        "Sorry you had a bad day", Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
         })
 
-        fsAlarmClock.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener{
+        fsHdr.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
-                when (newState){
-                    FancySwitch.State.ON ->  Toast.makeText(this@MainActivity,
-                        "Alarm clock ON", Toast.LENGTH_SHORT).show()
-                    FancySwitch.State.OFF ->  Toast.makeText(this@MainActivity,
-                        "Alarm clock OFF", Toast.LENGTH_SHORT).show()
+                when (newState) {
+                    FancySwitch.State.ON -> Toast.makeText(
+                        this@MainActivity,
+                        "Hdr is ON", Toast.LENGTH_SHORT
+                    ).show()
+                    FancySwitch.State.OFF -> Toast.makeText(
+                        this@MainActivity,
+                        "Hdr is OFF", Toast.LENGTH_SHORT
+                    ).show()
+                }
+
+            }
+
+        })
+
+        fsEye.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
+            override fun onChanged(newState: FancySwitch.State) {
+                when (newState) {
+                    FancySwitch.State.ON -> Toast.makeText(
+                        this@MainActivity,
+                        "Visibility is ON", Toast.LENGTH_SHORT
+                    ).show()
+                    FancySwitch.State.OFF -> Toast.makeText(
+                        this@MainActivity,
+                        "Visibility is OFF", Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
         })
 
-        fsCamera.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener{
+        fsAlarmClock.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
-                when (newState){
-                    FancySwitch.State.ON ->  Toast.makeText(this@MainActivity,
-                        "Front camera selected", Toast.LENGTH_SHORT).show()
-                    FancySwitch.State.OFF ->  Toast.makeText(this@MainActivity,
-                        "Back camera selected", Toast.LENGTH_SHORT).show()
+                when (newState) {
+                    FancySwitch.State.ON -> Toast.makeText(
+                        this@MainActivity,
+                        "Alarm clock ON", Toast.LENGTH_SHORT
+                    ).show()
+                    FancySwitch.State.OFF -> Toast.makeText(
+                        this@MainActivity,
+                        "Alarm clock OFF", Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+        })
+
+        fsCamera.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
+            override fun onChanged(newState: FancySwitch.State) {
+                when (newState) {
+                    FancySwitch.State.ON -> Toast.makeText(
+                        this@MainActivity,
+                        "Front camera selected", Toast.LENGTH_SHORT
+                    ).show()
+                    FancySwitch.State.OFF -> Toast.makeText(
+                        this@MainActivity,
+                        "Back camera selected", Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
 
@@ -93,18 +117,18 @@ class MainActivity : AppCompatActivity() {
 
         val mainLooperHandler = Handler(Looper.getMainLooper())
 
-        mainLooperHandler.post(object : Runnable {
+        mainLooperHandler.postDelayed(object : Runnable {
             override fun run() {
-                when (fsCamera.currentState){
+                when (fsCamera.currentState) {
                     FancySwitch.State.ON -> fsCamera.setState(FancySwitch.State.OFF)
                     else -> fsCamera.setState(FancySwitch.State.ON)
                 }
-                when (fsLock.currentState){
+                when (fsLock.currentState) {
                     FancySwitch.State.ON -> fsLock.setState(FancySwitch.State.OFF)
                     else -> fsLock.setState(FancySwitch.State.ON)
                 }
                 mainLooperHandler.postDelayed(this, 3000)
             }
-        })
+        }, 3000)
     }
 }
