@@ -13,7 +13,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        fsLock.setState(FancySwitch.State.ON)
         fsLock.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
                 when (newState){
@@ -100,7 +99,11 @@ class MainActivity : AppCompatActivity() {
                     FancySwitch.State.ON -> fsCamera.setState(FancySwitch.State.OFF)
                     else -> fsCamera.setState(FancySwitch.State.ON)
                 }
-                mainLooperHandler.postDelayed(this, 2000)
+                when (fsLock.currentState){
+                    FancySwitch.State.ON -> fsLock.setState(FancySwitch.State.OFF)
+                    else -> fsLock.setState(FancySwitch.State.ON)
+                }
+                mainLooperHandler.postDelayed(this, 3000)
             }
         })
     }

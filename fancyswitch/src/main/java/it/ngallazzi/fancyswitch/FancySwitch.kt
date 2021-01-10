@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.support.animation.DynamicAnimation
 import android.support.animation.SpringAnimation
+import android.support.animation.SpringForce
 import android.support.constraint.ConstraintLayout
 import android.support.v4.content.ContextCompat
 import android.support.v4.graphics.drawable.DrawableCompat
@@ -16,7 +17,10 @@ import android.view.MotionEvent
 import android.view.View
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.LANDSCAPE
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.PORTRAIT
-import kotlinx.android.synthetic.main.fancy_switch_portrait.view.*
+import kotlinx.android.synthetic.main.fancy_switch_portrait.view.clContainer
+import kotlinx.android.synthetic.main.fancy_switch_portrait.view.ibAction
+import kotlinx.android.synthetic.main.fancy_switch_portrait.view.ivActionOff
+import kotlinx.android.synthetic.main.fancy_switch_portrait.view.ivActionOn
 
 
 /**
@@ -90,18 +94,6 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
 
         var translationDelta = 0f
 
-        val translationLimit: Float = when (orientation) {
-            PORTRAIT.ordinal -> clContainer.y + clContainer.paddingTop
-            LANDSCAPE.ordinal -> clContainer.x + clContainer.width + clContainer.paddingStart
-            else -> 0f
-        }
-
-        val btActionInitialPosition = when (orientation) {
-            PORTRAIT.ordinal -> ibAction.y
-            LANDSCAPE.ordinal -> ibAction.x
-            else -> 0f
-        }
-
         ibAction.setOnTouchListener(object : OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
                 when (event.action) {
@@ -110,33 +102,27 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                             PORTRAIT.ordinal -> translationDelta = v.y - event.rawY
                             LANDSCAPE.ordinal -> translationDelta = v.x - event.rawX
                         }
-
                     }
                     // movement
                     MotionEvent.ACTION_MOVE -> {
-                        val newPosition: PointF
                         when (orientation) {
                             PORTRAIT.ordinal -> {
-                                newPosition = PointF(v.x, event.rawY + translationDelta)
-                                if (newPosition.y in translationLimit..btActionInitialPosition) {
+                                val newPosition = PointF(v.x, event.rawY + translationDelta)
+                                if (newPosition.y in ivActionOn.y..ivActionOff.y) {
                                     v.animate()
                                         .y(newPosition.y)
-                                        .setDuration(0)
                                         .start()
                                 }
                             }
                             LANDSCAPE.ordinal -> {
-                                newPosition = PointF(event.rawX + translationDelta, v.y)
-                                if (newPosition.x in btActionInitialPosition..translationLimit) {
+                                val newPosition = PointF(event.rawX + translationDelta, v.y)
+                                if (newPosition.x in ivActionOff.x..ivActionOn.x) {
                                     v.animate()
                                         .x(newPosition.x)
-                                        .setDuration(0)
                                         .start()
                                 }
                             }
                         }
-
-
                     }
                     // release
                     MotionEvent.ACTION_UP -> {
@@ -145,70 +131,18 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
                             LANDSCAPE.ordinal -> v.x - ivActionOff.x
                             else -> 0.0f
                         }
+
                         val actionCompleted: Boolean = when (orientation) {
                             PORTRAIT.ordinal -> draggedDistance >= (ivActionOff.y - ivActionOn.y) / 2
                             LANDSCAPE.ordinal -> draggedDistance >= (ivActionOn.x - ivActionOff.x) / 2
                             else -> false
                         }
-                        if (actionCompleted) {
-                            when (orientation) {
-                                PORTRAIT.ordinal -> {
-                                    ibAction.let {
-                                        SpringAnimation(
-                                            it,
-                                            DynamicAnimation.TRANSLATION_Y,
-                                            -(ivActionOff.y - ivActionOn.y - actionButtonMargin)
-                                        ).apply {
-                                            start()
-                                        }
-                                        it.setImageDrawable(actionOnButtonDrawable)
-                                    }
-                                }
-                                LANDSCAPE.ordinal -> {
-                                    ibAction.let {
-                                        SpringAnimation(
-                                            it,
-                                            DynamicAnimation.TRANSLATION_X,
-                                            (ivActionOn.x - ivActionOff.x - actionButtonMargin)
-                                        ).apply {
-                                            start()
-                                        }
-                                        it.setImageDrawable(actionOnButtonDrawable)
-                                    }
-                                }
-                            }
-                            clContainer.background.alpha = 255
-                            currentState = State.ON
-                        } else {
-                            when (orientation) {
-                                PORTRAIT.ordinal -> {
-                                    ibAction.let {
-                                        SpringAnimation(
-                                            it,
-                                            DynamicAnimation.TRANSLATION_Y,
-                                            0f
-                                        ).apply {
-                                            start()
-                                        }
-                                        it.setImageDrawable(actionOffButtonDrawable)
-                                    }
-                                }
-                                LANDSCAPE.ordinal -> {
-                                    ibAction.let {
-                                        SpringAnimation(
-                                            it,
-                                            DynamicAnimation.TRANSLATION_X,
-                                            0f
-                                        ).apply {
-                                            start()
-                                        }
-                                        it.setImageDrawable(actionOffButtonDrawable)
-                                    }
-                                }
-                            }
-                            clContainer.background.alpha = 51
-                            currentState = State.OFF
+
+                        when (actionCompleted) {
+                            true -> completeAction(orientation, ivActionOff, ivActionOn)
+                            false -> rollback(orientation)
                         }
+
                         Log.v(TAG, "Current state:${currentState.name}")
                         if (currentState != lastState && ::changeListener.isInitialized) {
                             changeListener.onChanged(currentState)
@@ -222,7 +156,42 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         updateLayoutForState()
     }
 
+    private fun completeAction(orientation: Int, offView: View, onView: View) {
+        ibAction.apply {
+            val animation = getStateAnimation(orientation, this)
+            when (orientation) {
+                PORTRAIT.ordinal -> {
+                    animation.animateToFinalPosition(-(offView.y - onView.y - actionButtonMargin))
+                    setImageDrawable(actionOnButtonDrawable)
+                }
+
+                LANDSCAPE.ordinal -> {
+                    animation.animateToFinalPosition(
+                        onView.x - offView.x - actionButtonMargin
+                    )
+                    setImageDrawable(actionOnButtonDrawable)
+                }
+            }
+        }
+
+        clContainer.background.alpha = 255
+        currentState = State.ON
+    }
+
+    private fun rollback(orientation: Int) {
+        ibAction.apply {
+            getStateAnimation(orientation, this).animateToFinalPosition(0f)
+            setImageDrawable(actionOffButtonDrawable)
+        }
+        clContainer.background.alpha = 51
+        currentState = State.OFF
+    }
+
     fun setState(newState: State) {
+        when (newState) {
+            State.ON -> completeAction(orientation, ivActionOff, ivActionOn)
+            State.OFF -> rollback(orientation)
+        }
         lastState = newState
         currentState = newState
         requestLayout()
@@ -232,27 +201,37 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         changeListener = listener
     }
 
+    private fun getStateAnimation(orientation: Int, view: View): SpringAnimation {
+        return when (orientation) {
+            PORTRAIT.ordinal ->
+                SpringAnimation(
+                    view,
+                    DynamicAnimation.TRANSLATION_Y,0f
+                )
+            else -> SpringAnimation(
+                view,
+                DynamicAnimation.TRANSLATION_X,0f
+            )
+        }
+    }
+
     private fun updateLayoutForState() {
         if (currentState == State.ON) {
             when (orientation) {
-                PORTRAIT.ordinal -> {
-                    ibAction.translationY = -(ivActionOff.y - ivActionOn.y - actionButtonMargin)
-                }
-                LANDSCAPE.ordinal -> {
-                    ibAction.translationX = (ivActionOn.x - ivActionOff.x - actionButtonMargin)
-                }
+                PORTRAIT.ordinal -> ibAction.translationY =
+                    -(ivActionOff.y - ivActionOn.y - actionButtonMargin)
+                LANDSCAPE.ordinal -> ibAction.translationX =
+                    (ivActionOn.x - ivActionOff.x - actionButtonMargin)
             }
+
             ibAction.setImageDrawable(actionOnButtonDrawable)
             clContainer.background.alpha = 255
         } else {
             when (orientation) {
-                PORTRAIT.ordinal -> {
-                    ibAction.translationY = 0F
-                }
-                LANDSCAPE.ordinal -> {
-                    ibAction.translationX = 0F
-                }
+                PORTRAIT.ordinal -> ibAction.translationY = 0F
+                LANDSCAPE.ordinal -> ibAction.translationX = 0F
             }
+
             ibAction.setImageDrawable(actionOffButtonDrawable)
             clContainer.background.alpha = 51
         }
@@ -267,11 +246,11 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         const val CORNER_RADIUS = 100.0f
     }
 
-    enum class Orientation(type: Int) {
-        PORTRAIT(0), LANDSCAPE(1)
+    enum class Orientation {
+        PORTRAIT, LANDSCAPE
     }
 
-    enum class State(state: Int, name: String) {
-        ON(1, "ON"), OFF(0, "OFF")
+    enum class State {
+        ON, OFF
     }
 }
