@@ -5,15 +5,15 @@ import android.content.res.TypedArray
 import android.graphics.PointF
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
-import android.support.animation.DynamicAnimation
-import android.support.animation.SpringAnimation
-import android.support.constraint.ConstraintLayout
-import android.support.v4.content.ContextCompat
-import android.support.v4.graphics.drawable.DrawableCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.dynamicanimation.animation.DynamicAnimation
+import androidx.dynamicanimation.animation.SpringAnimation
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.LANDSCAPE
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.PORTRAIT
 import kotlinx.android.synthetic.main.fancy_switch_portrait.view.*
@@ -34,8 +34,8 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     private var actionOffDrawable: Drawable
     private var actionOffButtonDrawable: Drawable
     private var lastState: State = State.OFF
-    private var currentState: State = State.OFF
-    private lateinit var changeListener: FancySwitch.SwitchStateChangedListener
+    var currentState: State = State.OFF
+    private lateinit var changeListener: SwitchStateChangedListener
 
     private var actionButtonMargin = 0
     private var mBaseColor: Int
