@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+
         fsSmile.setSwitchStateChangedListener(object : FancySwitch.SwitchStateChangedListener {
             override fun onChanged(newState: FancySwitch.State) {
                 when (newState) {
