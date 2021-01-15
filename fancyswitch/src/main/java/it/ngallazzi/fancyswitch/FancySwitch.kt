@@ -3,7 +3,6 @@ package it.ngallazzi.fancyswitch
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
@@ -11,6 +10,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.ImageButton
+import android.widget.ImageView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.dynamicanimation.animation.DynamicAnimation
@@ -18,7 +18,6 @@ import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.LANDSCAPE
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.PORTRAIT
-import kotlinx.android.synthetic.main.fancy_switch_portrait.view.*
 import kotlin.math.abs
 
 
@@ -79,23 +78,23 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         backgroundShape.cornerRadius = CORNER_RADIUS
         backgroundShape.setColor(mBaseColor)
 
-        inflateLayout(orientation)
+        inflate(context, getResourceLayout(orientation), this)
 
-        clContainer.background = backgroundShape
+        findViewById<ConstraintLayout>(R.id.clContainer).background = backgroundShape
 
-        ivActionOff.setImageDrawable(stateOff.drawable)
+        findViewById<ImageView>(R.id.ivActionOff).setImageDrawable(stateOff.drawable)
 
-        ivActionOn.setImageDrawable(stateOn.drawable)
+        findViewById<ImageView>(R.id.ivActionOn).setImageDrawable(stateOn.drawable)
 
         springAnimation = initAnimation(orientation)
 
         setState(stateOff.id)
     }
 
-    private fun inflateLayout(orientation: Int) {
-        when (orientation) {
-            PORTRAIT.ordinal -> inflate(context, R.layout.fancy_switch_portrait, this)
-            LANDSCAPE.ordinal -> inflate(context, R.layout.fancy_switch_land, this)
+    private fun getResourceLayout(orientation: Int): Int {
+        return when (orientation) {
+            PORTRAIT.ordinal -> R.layout.fancy_switch_portrait
+            else -> R.layout.fancy_switch_land
         }
     }
 
@@ -103,11 +102,11 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         val animation = when (orientation) {
             PORTRAIT.ordinal ->
                 SpringAnimation(
-                    ibAction,
+                    findViewById<ImageButton>(R.id.ibAction),
                     DynamicAnimation.TRANSLATION_Y, ANIMATION_INITIAL_POSITION
                 )
             else -> SpringAnimation(
-                ibAction,
+                findViewById<ImageButton>(R.id.ibAction),
                 DynamicAnimation.TRANSLATION_X, ANIMATION_INITIAL_POSITION
             )
         }
@@ -119,6 +118,11 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     @SuppressLint("ClickableViewAccessibility")
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
+
+        val ivActionOff = findViewById<ImageView>(R.id.ivActionOff)
+        val ivActionOn = findViewById<ImageView>(R.id.ivActionOn)
+        val ibAction = findViewById<ImageView>(R.id.ibAction)
+        val clContainer = findViewById<ConstraintLayout>(R.id.clContainer)
 
         ivActionOnPosition.apply {
             x = ivActionOn.x
@@ -142,7 +146,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
 
         ibAction.apply {
             val currentStateDrawableCopy = currentState.drawable.constantState!!.newDrawable()
-            currentStateDrawableCopy.setColorFilter(mBaseColor, PorterDuff.Mode.SRC_ATOP)
+            currentStateDrawableCopy.setTint(mBaseColor)
             setImageDrawable(currentStateDrawableCopy)
 
             setOnTouchListener { v, event ->

@@ -6,13 +6,13 @@ apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion rootProject.ext.compile_sdk_version
     defaultConfig {
-        applicationId "it.ngallazzi.swipetounlock"
-        minSdkVersion 19
-        targetSdkVersion 30
-        versionCode 2
-        versionName "1.1"
+        applicationId rootProject.ext.application_id
+        minSdkVersion rootProject.ext.min_sdk_version
+        targetSdkVersion rootProject.ext.target_sdk_version
+        versionCode rootProject.ext.app_version_code
+        versionName rootProject.ext.app_version_name
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -21,8 +21,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildFeatures{
+    buildFeatures {
         viewBinding true
+    }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
     }
 }
 
