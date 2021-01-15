@@ -2,6 +2,8 @@ package it.ngallazzi.fancyswitchsample
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import it.ngallazzi.fancyswitch.FancyState
@@ -18,29 +20,14 @@ class MainActivity : AppCompatActivity() {
         val view = binding.root
         setContentView(view)
 
-        binding.fsLock.setSwitchStateChangedListener(object : FancySwitch.StateChangedListener {
-            override fun onChanged(newState: FancyState) {
-                when (newState) {
-                    FancyState.ON -> Toast.makeText(
-                        this@MainActivity,
-                        "New switch state: Locked", Toast.LENGTH_SHORT
-                    ).show()
-                    FancyState.OFF -> Toast.makeText(
-                        this@MainActivity,
-                        "New switch state: Unlocked", Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        })
-
         binding.fsSmile.setSwitchStateChangedListener(object : FancySwitch.StateChangedListener {
             override fun onChanged(newState: FancyState) {
-                when (newState) {
-                    FancyState.ON -> Toast.makeText(
+                when (newState.id) {
+                    FancyState.State.ON -> Toast.makeText(
                         this@MainActivity,
                         "Smile, life is great!", Toast.LENGTH_SHORT
                     ).show()
-                    FancyState.OFF -> Toast.makeText(
+                    FancyState.State.OFF -> Toast.makeText(
                         this@MainActivity,
                         "Sorry you had a bad day", Toast.LENGTH_SHORT
                     ).show()
@@ -52,5 +39,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ScrollingActivity::class.java)
             startActivity(intent)
         }
+
+        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            binding.fsAlarmClock.setState(FancyState.State.ON)
+        }, 2000)
     }
 }

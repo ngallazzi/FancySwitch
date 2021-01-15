@@ -3,44 +3,38 @@ package it.ngallazzi.fancyswitch
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.drawable.Drawable
+import android.graphics.Color
+import android.graphics.PointF
+import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.view.View
 import android.widget.ImageButton
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.dynamicanimation.animation.DynamicAnimation
 import androidx.dynamicanimation.animation.SpringAnimation
 import androidx.dynamicanimation.animation.SpringForce
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.LANDSCAPE
 import it.ngallazzi.fancyswitch.FancySwitch.Orientation.PORTRAIT
-import kotlinx.android.synthetic.main.fancy_switch_portrait.view.clContainer
-import kotlinx.android.synthetic.main.fancy_switch_portrait.view.ibAction
-import kotlinx.android.synthetic.main.fancy_switch_portrait.view.ivActionOff
-import kotlinx.android.synthetic.main.fancy_switch_portrait.view.ivActionOn
+import kotlinx.android.synthetic.main.fancy_switch_portrait.view.*
 import kotlin.math.abs
 
 
 /**
  * SwipeToUnlock
  * Created by Nicola on 2/1/2019.
- * Copyright © 2019 Zehus. All rights reserved.
+ * Copyright © 2019 Nicola Gallazzi. All rights reserved.
  */
 class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), FancyActions {
 
-    private var backgroundShape = GradientDrawable()
-    private var actionOnDrawable: Drawable
-    private var actionOnButtonDrawable: Drawable
-    private var actionOffDrawable: Drawable
-    private var actionOffButtonDrawable: Drawable
+    private val stateOn: FancyState
+    private val stateOff: FancyState
 
-    var currentState: FancyState = FancyState.OFF
+    private lateinit var currentState: FancyState
 
     private lateinit var changeListener: StateChangedListener
 
@@ -49,12 +43,15 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     private val orientation: Int
     private val springAnimation: SpringAnimation
 
+    private var ivActionOnPosition = PointF(0f, 0f)
+
+    private var ivActionOffPosition = PointF(0f, 0f)
+
     private var attributes: TypedArray = context.theme.obtainStyledAttributes(
         attrs,
         R.styleable.FancySwitch,
         0, 0
     )
-
 
     init {
         mBaseColor = attributes.getColor(
@@ -68,11 +65,16 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
             ((resources.getDimension(R.dimen.iv_action_completed_margin) /
                     resources.displayMetrics.density).toInt())
 
-        actionOnDrawable = attributes.getDrawable(R.styleable.FancySwitch_actionOnDrawable)
-        actionOffDrawable = attributes.getDrawable(R.styleable.FancySwitch_actionOffDrawable)
-        actionOnButtonDrawable = actionOnDrawable.constantState.newDrawable().mutate()
-        actionOffButtonDrawable = actionOffDrawable.constantState.newDrawable().mutate()
+        val actionOnDrawable = attributes.getDrawable(R.styleable.FancySwitch_actionOnDrawable)
+            ?: ContextCompat.getDrawable(context, R.drawable.ic_lock_closed)!!
 
+        val actionOffDrawable = attributes.getDrawable(R.styleable.FancySwitch_actionOffDrawable)
+            ?: ContextCompat.getDrawable(context, R.drawable.ic_lock_open)!!
+
+        stateOn = FancyState(FancyState.State.ON, actionOnDrawable)
+        stateOff = FancyState(FancyState.State.OFF, actionOffDrawable)
+
+        val backgroundShape = GradientDrawable()
         backgroundShape.shape = GradientDrawable.RECTANGLE
         backgroundShape.cornerRadius = CORNER_RADIUS
         backgroundShape.setColor(mBaseColor)
@@ -81,16 +83,13 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
 
         clContainer.background = backgroundShape
 
-        ivActionOff.setImageDrawable(actionOffDrawable)
-        ivActionOn.setImageDrawable(actionOnDrawable)
+        ivActionOff.setImageDrawable(stateOff.drawable)
 
-        DrawableCompat.setTint(actionOnButtonDrawable, mBaseColor)
-        ibAction.setImageDrawable(actionOnButtonDrawable)
-        DrawableCompat.setTint(actionOffButtonDrawable, mBaseColor)
+        ivActionOn.setImageDrawable(stateOn.drawable)
 
         springAnimation = initAnimation(orientation)
 
-        setState(currentState)
+        setState(stateOff.id)
     }
 
     private fun inflateLayout(orientation: Int) {
@@ -105,11 +104,11 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
             PORTRAIT.ordinal ->
                 SpringAnimation(
                     ibAction,
-                    DynamicAnimation.TRANSLATION_Y, 0f
+                    DynamicAnimation.TRANSLATION_Y, ANIMATION_INITIAL_POSITION
                 )
             else -> SpringAnimation(
                 ibAction,
-                DynamicAnimation.TRANSLATION_X, 0f
+                DynamicAnimation.TRANSLATION_X, ANIMATION_INITIAL_POSITION
             )
         }
         animation.spring.stiffness = SpringForce.STIFFNESS_LOW
@@ -121,114 +120,134 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
 
-        var translationDelta = 0f
+        ivActionOnPosition.apply {
+            x = ivActionOn.x
+            y = ivActionOn.y
+        }
 
-        ibAction.setOnTouchListener { v, event ->
-            val actionButton = v as ImageButton
-            actionButton.parent.requestDisallowInterceptTouchEvent(true)
+        ivActionOffPosition.apply {
+            x = ivActionOff.x
+            y = ivActionOff.y
+        }
 
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    when (orientation) {
-                        PORTRAIT.ordinal -> translationDelta = actionButton.y - event.y
-                        LANDSCAPE.ordinal -> translationDelta = actionButton.x - event.x
+        springAnimation.animateToFinalPosition(
+            getFinalPositionForState(
+                currentState,
+                ivActionOnPosition,
+                ivActionOffPosition
+            )
+        )
+
+        clContainer.background.alpha = currentState.id.alpha
+
+        ibAction.apply {
+            val currentStateDrawableCopy = currentState.drawable.constantState!!.newDrawable()
+            currentStateDrawableCopy.setColorFilter(mBaseColor, PorterDuff.Mode.SRC_ATOP)
+            setImageDrawable(currentStateDrawableCopy)
+
+            setOnTouchListener { v, event ->
+                val actionButton = v as ImageButton
+                actionButton.parent.requestDisallowInterceptTouchEvent(true)
+
+                when (event.action) {
+                    // release
+                    MotionEvent.ACTION_UP -> {
+                        val draggedDistance =
+                            getDraggedDistance(event, ivActionOnPosition, ivActionOffPosition)
+                        Log.v(TAG, "Distance: $draggedDistance")
+                        if (isActionCompleted(
+                                draggedDistance,
+                                ivActionOnPosition,
+                                ivActionOffPosition
+                            )
+                        ) {
+                            when (currentState) {
+                                stateOn -> setState(stateOff.id)
+                                stateOff -> setState(stateOn.id)
+                            }
+                        } else {
+                            when (currentState) {
+                                stateOn -> setState(stateOn.id)
+                                stateOff -> setState(stateOff.id)
+                            }
+                        }
                     }
                 }
-
-                // movement
-                MotionEvent.ACTION_MOVE -> {
-                    when (orientation) {
-                        PORTRAIT.ordinal -> {
-                            /*if (event.y + translationDelta in ivActionOn.y..ivActionOff.y) {
-                                actionButton.animate()
-                                    .y(event.y + translationDelta)
-                                    .start()
-                            }*/
-                        }
-                        LANDSCAPE.ordinal -> {
-                            /*if (event.x + translationDelta in ivActionOff.x..ivActionOn.x) {
-                                actionButton.animate()
-                                    .x(event.x + translationDelta)
-                                    .start()
-                            }*/
-                        }
-                    }
-                }
-                // release
-                MotionEvent.ACTION_UP -> {
-                    val draggedDistance = getDraggedDistance(event)
-                    Log.v(TAG, "Distance: $draggedDistance")
-                    if (isActionCompleted(draggedDistance)) {
-                        when (currentState) {
-                            FancyState.ON -> setState(FancyState.OFF)
-                            FancyState.OFF -> setState(FancyState.ON)
-                        }
-                    } else {
-                        when (currentState) {
-                            FancyState.ON -> setState(FancyState.ON)
-                            FancyState.OFF -> setState(FancyState.OFF)
-                        }
-                    }
-                }
+                true
             }
-            true
         }
     }
 
-    private fun isActionCompleted(draggedDistance: Float): Boolean {
+    private fun isActionCompleted(
+        draggedDistance: Float,
+        actionOnCoordinates: PointF,
+        actionOffCoordinates: PointF
+    ): Boolean {
         return when (orientation) {
-            PORTRAIT.ordinal -> draggedDistance >= ((ivActionOff.y - ivActionOn.y) / 5.0f)
-            LANDSCAPE.ordinal -> draggedDistance >= ((ivActionOn.x - ivActionOff.x) / 5.0f)
+            PORTRAIT.ordinal -> draggedDistance >= ((actionOffCoordinates.y
+                    - actionOnCoordinates.y) / ACTION_COMPLETED_THRESHOLD_FACTOR)
+            LANDSCAPE.ordinal -> draggedDistance >= ((actionOnCoordinates.x
+                    - actionOffCoordinates.x) / ACTION_COMPLETED_THRESHOLD_FACTOR)
             else -> false
         }
     }
 
-    private fun getDraggedDistance(event: MotionEvent): Float {
+    private fun getDraggedDistance(
+        event: MotionEvent,
+        actionOnCoordinates: PointF,
+        actionOffCoordinates: PointF
+    ): Float {
         return when (currentState) {
-            FancyState.ON -> {
+            stateOn -> {
                 when (orientation) {
-                    PORTRAIT.ordinal -> abs(event.y - ivActionOn.y)
-                    LANDSCAPE.ordinal -> abs(event.x - ivActionOn.x)
-                    else -> 0.0f
+                    PORTRAIT.ordinal -> abs(event.y - actionOnCoordinates.y)
+                    LANDSCAPE.ordinal -> abs(event.x - actionOnCoordinates.x)
+                    else -> ANIMATION_INITIAL_POSITION
                 }
             }
-            FancyState.OFF -> {
+
+            stateOff -> {
                 when (orientation) {
-                    PORTRAIT.ordinal -> abs(event.y - ivActionOff.y)
-                    LANDSCAPE.ordinal -> abs(event.x - ivActionOff.x)
-                    else -> 0.0f
+                    PORTRAIT.ordinal -> abs(event.y - actionOffCoordinates.y)
+                    LANDSCAPE.ordinal -> abs(event.x - actionOffCoordinates.x)
+                    else -> ANIMATION_INITIAL_POSITION
                 }
             }
+            else -> 0f
         }
     }
 
-    private fun getFinalPositionForState(state: FancyState): Float {
+    private fun getFinalPositionForState(
+        state: FancyState,
+        actionOnCoordinates: PointF,
+        actionOffCoordinates: PointF
+    ): Float {
         return when (state) {
-            FancyState.ON -> {
+            stateOn -> {
                 when (orientation) {
-                    PORTRAIT.ordinal -> -(ivActionOff.y - ivActionOn.y - actionButtonMargin)
-                    else -> ivActionOn.x - ivActionOff.x - actionButtonMargin
+                    PORTRAIT.ordinal ->
+                        -(actionOffCoordinates.y - actionOnCoordinates.y - actionButtonMargin)
+                    else ->
+                        (actionOnCoordinates.x - actionOffCoordinates.x - actionButtonMargin)
                 }
             }
-            FancyState.OFF -> {
+            stateOff -> {
                 when (orientation) {
-                    PORTRAIT.ordinal -> 0f
-                    else -> 0f
+                    PORTRAIT.ordinal -> ANIMATION_INITIAL_POSITION
+                    else -> ANIMATION_INITIAL_POSITION
                 }
             }
+            else -> 0f
         }
     }
 
 
-    override fun setState(newState: FancyState) {
-        when (newState) {
-            FancyState.ON -> ibAction.setImageDrawable(actionOnButtonDrawable)
-            FancyState.OFF -> ibAction.setImageDrawable(actionOffButtonDrawable)
+    override fun setState(newState: FancyState.State) {
+        currentState = when (newState) {
+            FancyState.State.ON -> stateOn
+            FancyState.State.OFF -> stateOff
         }
 
-        springAnimation.animateToFinalPosition(getFinalPositionForState(newState))
-        clContainer.background.alpha = newState.alpha
-        currentState = newState
         requestLayout()
 
         if (::changeListener.isInitialized) {
@@ -243,6 +262,8 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     companion object {
         val TAG = FancySwitch::class.simpleName
         const val CORNER_RADIUS = 100.0f
+        const val ANIMATION_INITIAL_POSITION = 0.0f
+        const val ACTION_COMPLETED_THRESHOLD_FACTOR = 5.0f
     }
 
     enum class Orientation {
