@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/baseBackgroundColor"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.core.widget.NestedScrollView
+            android:layout_width="0dp"
+            android:layout_height="300dp"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <it.ngallazzi.fancyswitch.FancySwitch
+                    android:id="@+id/fsAlarmClock"
+                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    app:orientation="LANDSCAPE"
+                    app:actionOffDrawable="@drawable/ic_alarm_off"
+                    app:actionOnDrawable="@drawable/ic_alarm_on"
+                    app:baseColor="@android:color/holo_red_dark"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp" />
+
+            <it.ngallazzi.fancyswitch.FancySwitch
+                    android:id="@+id/fsHdr"
+                    android:layout_height="150dp"
+                    android:layout_width="wrap_content"
+                    app:orientation="PORTRAIT"
+                    app:actionOffDrawable="@drawable/ic_hdr_off"
+                    app:actionOnDrawable="@drawable/ic_hdr_on"
+                    app:baseColor="@android:color/holo_blue_dark"
+                    app:layout_constraintTop_toBottomOf="@+id/fsAlarmClock"
+                    android:layout_marginTop="32dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="32dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
