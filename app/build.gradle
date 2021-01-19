@@ -36,5 +36,5 @@ dependencies {
 
     androidTestImplementation "androidx.test.ext:junit:$androidx_test_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_core_version"
-    implementation project(path: ':fancyswitch')
+    implementation "com.github.ngallazzi:FancySwitch:$fancy_switch_version_name"
 }

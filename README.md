@@ -14,7 +14,7 @@ A nice looking switch for on/off and two states operations
 
 in your build.gradle (Module)
 ```groovy
-implementation 'com.github.ngallazzi:FancySwitch:master-SNAPSHOT'
+implementation 'com.github.ngallazzi:FancySwitch:1.1'
 ```
 
 in your build.gradle (Project)
