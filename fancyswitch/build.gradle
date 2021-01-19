@@ -9,9 +9,6 @@ android {
         targetSdkVersion rootProject.ext.target_sdk_version
         versionCode rootProject.ext.fancy_switch_code_version
         versionName rootProject.ext.fancy_switch_version_name
-
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -19,6 +16,10 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+
+    testOptions {
+        unitTests.includeAndroidResources = true
     }
 
 }
@@ -29,6 +30,7 @@ dependencies {
     implementation "androidx.appcompat:appcompat:$app_compat_version"
     // Unit Testing
     testImplementation "junit:junit:$junit_version"
+    // Optional -- Robolectric environment
     testImplementation "androidx.test:core:$test_core_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
 

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.PointF
-import android.graphics.PorterDuff
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.util.Log
@@ -26,7 +25,7 @@ import kotlin.math.abs
  * Created by Nicola on 2/1/2019.
  * Copyright © 2019 Nicola Gallazzi. All rights reserved.
  */
-class FancySwitch @kotlin.jvm.JvmOverloads constructor(
+open class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : ConstraintLayout(context, attrs, defStyleAttr), FancyActions {
 
@@ -91,7 +90,7 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         setState(stateOff.id)
     }
 
-    private fun getResourceLayout(orientation: Int): Int {
+    internal fun getResourceLayout(orientation: Int): Int {
         return when (orientation) {
             PORTRAIT.ordinal -> R.layout.fancy_switch_portrait
             else -> R.layout.fancy_switch_land
@@ -182,16 +181,18 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
         }
     }
 
-    private fun isActionCompleted(
+    internal fun isActionCompleted(
         draggedDistance: Float,
         actionOnCoordinates: PointF,
-        actionOffCoordinates: PointF
+        actionOffCoordinates: PointF,
+        thresholdFactor: Float = ACTION_COMPLETED_THRESHOLD_FACTOR,
+        currentOrientation: Int = orientation
     ): Boolean {
-        return when (orientation) {
+        return when (currentOrientation) {
             PORTRAIT.ordinal -> draggedDistance >= ((actionOffCoordinates.y
-                    - actionOnCoordinates.y) / ACTION_COMPLETED_THRESHOLD_FACTOR)
+                    - actionOnCoordinates.y) / thresholdFactor)
             LANDSCAPE.ordinal -> draggedDistance >= ((actionOnCoordinates.x
-                    - actionOffCoordinates.x) / ACTION_COMPLETED_THRESHOLD_FACTOR)
+                    - actionOffCoordinates.x) / thresholdFactor)
             else -> false
         }
     }
@@ -199,22 +200,22 @@ class FancySwitch @kotlin.jvm.JvmOverloads constructor(
     private fun getDraggedDistance(
         event: MotionEvent,
         actionOnCoordinates: PointF,
-        actionOffCoordinates: PointF
+        actionOffCoordinates: PointF,
+        curOrientation: Int = orientation,
+        curState: FancyState = currentState
     ): Float {
-        return when (currentState) {
+        return when (curState) {
             stateOn -> {
-                when (orientation) {
+                when (curOrientation) {
                     PORTRAIT.ordinal -> abs(event.y - actionOnCoordinates.y)
-                    LANDSCAPE.ordinal -> abs(event.x - actionOnCoordinates.x)
-                    else -> ANIMATION_INITIAL_POSITION
+                    else -> abs(event.x - actionOnCoordinates.x)
                 }
             }
 
             stateOff -> {
-                when (orientation) {
+                when (curOrientation) {
                     PORTRAIT.ordinal -> abs(event.y - actionOffCoordinates.y)
-                    LANDSCAPE.ordinal -> abs(event.x - actionOffCoordinates.x)
-                    else -> ANIMATION_INITIAL_POSITION
+                    else -> abs(event.x - actionOffCoordinates.x)
                 }
             }
             else -> 0f
