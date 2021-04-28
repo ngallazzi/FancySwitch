@@ -83,6 +83,7 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 # Public Methods
 
 - setSwitchStateChangedListener(listener: SwitchStateChangedListener): sets a listener for switch state changes
+- setState(newState: FancyState.State): sets the switch state programmatically
  
  # License
 ```groovy 
