@@ -81,8 +81,18 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
  - custom **baseColor**: "app:baseColor" - sets the base color for the switch 
  
 # Public Methods
-
+```groovy
+// Kotlin
 - setSwitchStateChangedListener(listener: SwitchStateChangedListener): sets a listener for switch state changes
+- setState(newState: FancyState.State): sets the switch state programmatically
+```
+
+```groovy
+// Java
+- setSwitchStateChangedListener(SwitchStateChangedListener listener): sets a listener for switch state changes
+- setState(FancyState.State newState): sets the switch state programmatically
+}
+```
  
  # License
 ```groovy 
