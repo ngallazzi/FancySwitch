@@ -91,7 +91,6 @@ protected void onCreate(@Nullable Bundle savedInstanceState) {
 // Java
 - setSwitchStateChangedListener(SwitchStateChangedListener listener): sets a listener for switch state changes
 - setState(FancyState.State newState): sets the switch state programmatically
-}
 ```
  
  # License
